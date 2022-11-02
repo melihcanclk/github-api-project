@@ -1,9 +1,12 @@
 import "./App.css";
 import { useCallback, useEffect, useState } from "react";
+import Form from "react-bootstrap/Form";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const [username, setUsername] = useState("");
   const [data, setData] = useState([]);
+  const [isSearchMode, setIsSearchMode] = useState(false);
   const [pageQueue, setPageQueue] = useState([
     {
       firstID: 0,
@@ -46,7 +49,6 @@ function App() {
                   },
                 ])
             : setPageQueue([...pageQueue]);
-
           setLoading(false);
         });
     },
@@ -61,8 +63,13 @@ function App() {
   };
 
   useEffect(() => {
-    fetchData("next");
-  }, []);
+    if (!isSearchMode) {
+      fetchData("next");
+    } else {
+      setData([]);
+      setPageQueue([{ firstID: 0, lastID: 0 }]);
+    }
+  }, [isSearchMode]);
 
   const searchInRepo = () => {
     // fetch(
@@ -78,18 +85,31 @@ function App() {
   return (
     <div className='page'>
       <div className='page-container'>
-        <form className='form'>
-          <input
-            className='input'
-            type='text'
-            placeholder='Enter Github Username'
-            value={username}
-            onChange={handleChangeUsername}
+        <div className='page-header'>
+          <h4 className='switch-label'>Search Mode</h4>
+          <Form.Switch
+            className='switch'
+            onChange={() => {
+              setIsSearchMode(!isSearchMode);
+            }}
+            id='custom-switch'
+            checked={isSearchMode}
           />
-          <button className='button' type='button' onClick={searchInRepo}>
-            Search
-          </button>
-        </form>
+        </div>
+        {isSearchMode ? (
+          <form className='form'>
+            <input
+              className='input'
+              type='text'
+              placeholder='Enter Github Username'
+              value={username}
+              onChange={handleChangeUsername}
+            />
+            <button className='button' type='button' onClick={searchInRepo}>
+              Search
+            </button>
+          </form>
+        ) : null}
         <div className='pagination'>
           {page > 0 && (
             <button className='button' id='prev' onClick={handlePagination}>
@@ -113,12 +133,13 @@ function App() {
                     alt='user'
                   />
                   <div className='user-info'>
-                    <h2>{user.login}</h2>
+                    <h2 className='user-info-text'>{user.login}</h2>
                   </div>
                 </div>
               );
             })
           )}
+          {console.log({ pageQueue }, { page })}
         </div>
       </div>
     </div>
