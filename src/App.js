@@ -1,29 +1,27 @@
-import "./App.css";
 import { useCallback, useEffect, useState } from "react";
-import Form from "react-bootstrap/Form";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+
+import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import SearchMode from "./SearchMode";
-import ListMode from "./ListMode";
+
+import UserDetails from "./UserDetails";
+import Home from "./Home";
 
 function App() {
-  const [isSearchMode, setIsSearchMode] = useState(false);
   return (
-    <div className='page'>
-      <div className='page-container'>
-        <div className='page-header'>
-          <h4 className='switch-label'>Search Mode</h4>
-          <Form.Switch
-            className='switch'
-            onChange={() => {
-              setIsSearchMode(!isSearchMode);
-            }}
-            id='custom-switch'
-            checked={isSearchMode}
-          />
-        </div>
-        {isSearchMode ? <SearchMode /> : <ListMode />}
+    <Router>
+      <div className='App'>
+        <Routes>
+          <Route exact path='/' element={<Home />}></Route>
+          <Route
+            exact
+            path='/user-details/:username'
+            element={<UserDetails />}
+          ></Route>
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
 

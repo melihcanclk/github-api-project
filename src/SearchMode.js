@@ -1,36 +1,46 @@
 import "./App.css";
 import { useCallback, useEffect, useState } from "react";
-import Form from "react-bootstrap/Form";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ListUsers from "./ListUsers";
 
 function SearchMode() {
   const [username, setUsername] = useState("");
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const handleChangeUsername = (e) => {
+  const handleChangeUsername = useCallback((e) => {
     setUsername(e.target.value);
-    console.log(username);
-  };
+  }, []);
 
-  const handlePagination = (e) => {
+  const handlePrev = (e) => {
+    e.preventDefault();
     setLoading(true);
-    const buttonID = e.currentTarget.id;
-    setPage(buttonID === "next" ? page + 1 : page - 1);
-    //fetchData(buttonID);
+    setPage(page - 1);
   };
 
-  const searchInRepo = () => {
-    // fetch(
-    //   `https://api.github.com/search/users?q=${username}&&page=${page}&&per_page=10`
-    // )
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     setData(data.items);
-    //   });
+  const handleNext = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setPage(page + 1);
   };
+  const searchInRepo = () => {
+    /**
+     * search users with username and page number in github api at most 10 users per page
+     */
+    fetch(
+      `https://api.github.com/search/users?q=${username}&&page=${page}&&per_page=10`
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setData(res.items);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    searchInRepo();
+  }, [page]);
 
   return (
     <>
@@ -47,31 +57,16 @@ function SearchMode() {
         </button>
       </form>
       <div className='pagination'>
-        {page > 0 && (
-          <button className='button' id='prev' onClick={handlePagination}>
+        {page > 1 && (
+          <button className='button' id='prev' onClick={handlePrev}>
             Prev
           </button>
         )}
-        <button className='button' id='next' onClick={handlePagination}>
+        <button className='button' id='next' onClick={handleNext}>
           Next
         </button>
       </div>
-      <div className='users'>
-        {loading ? (
-          <h1 className='user'>Loading...</h1>
-        ) : (
-          data.map((user) => {
-            return (
-              <div className='user' key={user.avatar_url}>
-                <img className='avatar-url' src={user.avatar_url} alt='user' />
-                <div className='user-info'>
-                  <h2 className='user-info-text'>{user.login}</h2>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
+      <ListUsers data={data} loading={loading} />
     </>
   );
 }
