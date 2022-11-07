@@ -1,17 +1,13 @@
 import "./App.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ListUsers from "./ListUsers";
 
 function SearchMode() {
-  const [username, setUsername] = useState("");
+  const usernameRef = useRef();
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-
-  const handleChangeUsername = useCallback((e) => {
-    setUsername(e.target.value);
-  }, []);
 
   const handlePrev = (e) => {
     e.preventDefault();
@@ -29,7 +25,7 @@ function SearchMode() {
      * search users with username and page number in github api at most 10 users per page
      */
     fetch(
-      `https://api.github.com/search/users?q=${username}&&page=${page}&&per_page=10`
+      `https://api.github.com/search/users?q=${usernameRef.current.value}&&page=${page}&&per_page=10`
     )
       .then((res) => res.json())
       .then((res) => {
@@ -39,7 +35,9 @@ function SearchMode() {
   };
 
   useEffect(() => {
-    searchInRepo();
+    if (usernameRef.current.value) {
+      searchInRepo();
+    }
   }, [page]);
 
   return (
@@ -49,8 +47,7 @@ function SearchMode() {
           className='input'
           type='text'
           placeholder='Enter Github Username'
-          value={username}
-          onChange={handleChangeUsername}
+          ref={usernameRef}
         />
         <button className='button' type='button' onClick={searchInRepo}>
           Search
