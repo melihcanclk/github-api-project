@@ -6,7 +6,7 @@ import ListUsers from "./ListUsers";
 function SearchMode() {
   const usernameRef = useRef();
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const handlePrev = (e) => {
@@ -20,6 +20,14 @@ function SearchMode() {
     setLoading(true);
     setPage(page + 1);
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setPage(1);
+    searchInRepo();
+  };
+
   const searchInRepo = () => {
     /**
      * search users with username and page number in github api at most 10 users per page
@@ -42,16 +50,13 @@ function SearchMode() {
 
   return (
     <>
-      <form className='form'>
+      <form className='form' onSubmit={handleSubmit}>
         <input
           className='input'
           type='text'
           placeholder='Enter Github Username'
           ref={usernameRef}
         />
-        <button className='button' type='button' onClick={searchInRepo}>
-          Search
-        </button>
       </form>
       <div className='pagination'>
         {page > 1 && (
@@ -59,9 +64,11 @@ function SearchMode() {
             Prev
           </button>
         )}
-        <button className='button' id='next' onClick={handleNext}>
-          Next
-        </button>
+        {page > 0 && (
+          <button className='button' id='next' onClick={handleNext}>
+            Next
+          </button>
+        )}
       </div>
       <ListUsers data={data} loading={loading} />
     </>
