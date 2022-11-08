@@ -14,7 +14,9 @@ function App() {
     <div className='page'>
       <div className='page-container'>
         <div className='page-header'>
-          <h4 className='switch-label'>Search Mode</h4>
+          <h4 className='switch-label'>
+            {isSearchMode ? "Search Mode" : "List Mode"}
+          </h4>
           <Form.Switch
             className='switch'
             onChange={() => {
