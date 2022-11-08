@@ -65,6 +65,9 @@ function SearchMode() {
           placeholder='Enter Github Username'
           ref={usernameRef}
         />
+        <button className='button' type='submit'>
+          Search
+        </button>
       </form>
       <div className='pagination'>
         {page > 1 && (
