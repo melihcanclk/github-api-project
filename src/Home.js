@@ -1,6 +1,6 @@
-import {  useState } from "react";
+import { useState } from "react";
 import React from "react";
-import Form from "react-bootstrap/Form";
+import Switch from "react-switch";
 
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -10,6 +10,7 @@ import ListMode from "./ListMode";
 
 function App() {
   const [isSearchMode, setIsSearchMode] = useState(false);
+
   return (
     <div className='page'>
       <div className='page-container'>
@@ -17,13 +18,9 @@ function App() {
           <h4 className='switch-label'>
             {isSearchMode ? "Search Mode" : "List Mode"}
           </h4>
-          <Form.Switch
-            className='switch'
-            onChange={() => {
-              setIsSearchMode(!isSearchMode);
-            }}
-            id='custom-switch'
+          <Switch
             checked={isSearchMode}
+            onChange={(e) => setIsSearchMode(!isSearchMode)}
           />
         </div>
         {isSearchMode ? <SearchMode /> : <ListMode />}
