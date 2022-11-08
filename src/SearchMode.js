@@ -7,6 +7,7 @@ function SearchMode() {
   const usernameRef = useRef();
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handlePrev = (e) => {
@@ -35,9 +36,16 @@ function SearchMode() {
     fetch(
       `https://api.github.com/search/users?q=${usernameRef.current.value}&&page=${page}&&per_page=10`
     )
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error("Error: Status - " + res.status);
+      })
       .then((res) => {
         setData(res.items);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
         setLoading(false);
       });
   };
@@ -70,7 +78,15 @@ function SearchMode() {
           </button>
         )}
       </div>
-      <ListUsers data={data} loading={loading} />
+      <div className='users'>
+        {error ? (
+          <div className='user switch-label'>{error}</div>
+        ) : loading ? (
+          <div className='user switch-label'>Loading...</div>
+        ) : (
+          <ListUsers data={data} />
+        )}
+      </div>
     </>
   );
 }
