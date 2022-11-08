@@ -13,7 +13,7 @@ function ListUsers({ loading, data }) {
               <div className='user' key={user.avatar_url}>
                 <img className='avatar-url' src={user.avatar_url} alt='user' />
                 <div className='user-info'>
-                  <a className='link' href={`/user-details/${user.login}`}>
+                  <a className='link' href={`/${user.login}`}>
                     <h2 className='user-info-text'>{user.login}</h2>
                   </a>
                 </div>
